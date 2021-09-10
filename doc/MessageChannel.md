@@ -1,0 +1,5 @@
+目前requestIdCallback 目前只有chrome支持
+所以目前react 利用messageChannel 模拟了requestIdCallback 将回调延迟到绘制操作之后执行
+messageChannel API 允许我们创建了一个新的消息通道 并通过它的两个 MessagePort 属性发送数据
+messageChannel 创建了一个通信的管道 这个管道有两个端口 每个端口都可以通过postMessage 发送数据 而一个端口只要绑定了onmessage 回调方法 ,就可以收到另一个端口的传过来的数据
+messageChannel 是一个宏任务
