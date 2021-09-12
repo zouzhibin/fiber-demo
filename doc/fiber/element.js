@@ -19,7 +19,8 @@ let element = {
                         "props": {
                             "id": "C2"
                         },
-                    }
+                    },
+                   
                 ]
             },
         },

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /**
+         * 在Fiber 中 很多地方都用到链表
+         */ 
+        class Update{ // payload 数据或者 元素
+            constructor(payload,nextUpdate){
+                this.payload = payload
+                this.nextUpdate = nextUpdate // 指向下一个节点的指针
+            }
+        }
+        class UpdateQueue{
+            constructor(){
+                this.baseState = null // 原状态
+                this.firstUpdate = null // 第一个更新
+                this.lastUpdate = null // 最后一个更新
+            }
+            enqueueUpdate(update){
+                if(this.firstUpdate==null){
+                    this.firstUpdate = this.lastUpdate = update
+                }else{
+                    // 上一个最后一个节点的nextUpdate指向自己
+                    this.lastUpdate.nextUpdate = update 
+                    this.lastUpdate = update // 让最后一个指向自己
+                }
+            }
+            // 获取老状态 然后遍历这个链表 进行更新
+            forceUpdate(){
+                let currentState = this.baseState||{}// 初始状态
+                let currentUpdate = this.firstUpdate
+                while(currentUpdate){
+                    let nextState;
+                    if(typeof currentUpdate.payload==='function'){
+                        nextState = currentUpdate.payload(currentState)
+                    }else{
+                        nextState = currentUpdate.payload
+                    }
+                    currentState = {...currentState,...nextState}
+                    currentUpdate = currentUpdate.nextUpdate // 找下一个节点
+                }
+                this.firstUpdate = this.lastUpdate = null ; // 更新完成后要把链表清空
+                this.baseState = currentState
+                return currentState;
+
+            }
+
+        }
+
+        // 计数器{number:0} setState({number:1}) setState((state)=>({number:state.number+1}))
+        let queue = new UpdateQueue()
+        queue.enqueueUpdate(new Update({name:'zs'}))
+        queue.enqueueUpdate(new Update({number:'0'}))
+        queue.enqueueUpdate(new Update((state)=>({number:state.number+1})))
+        queue.enqueueUpdate(new Update((state)=>({number:state.number+1})))
+        queue.forceUpdate()
+
+        console.log(queue.)
+        // 因为链表可以很方便的中断和恢复
+    </script>
+</body>
+</html>
